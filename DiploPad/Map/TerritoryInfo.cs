@@ -1,4 +1,6 @@
-﻿namespace DiploPad.Map;
+﻿using DiploPad;
+
+namespace DiploPad.Map;
 
 /// <summary>
 /// Superficial information about a territory and its relationship
@@ -6,7 +8,7 @@
 /// 
 /// This class never includes any game instance data.
 /// </summary>
-public class TerritoryInfo
+public class TerritoryInfo : Parsing.IParsable<TerritoryInfo>
 {
     /// <summary>
     /// The name of the territory, with proper capitalization,
@@ -22,9 +24,9 @@ public class TerritoryInfo
     public IReadOnlyList<string> Abbreviations { get; }
 
     /// <summary>
-    /// Terrain information about this territory.
+    /// Geographical information about this territory.
     /// </summary>
-    public ITerrain Terrain { get; internal set; }
+    public IGeography Geography { get; internal set; }
 
     /// <summary>
     /// The abbreviation most conventionally used to identify this province.
@@ -36,6 +38,8 @@ public class TerritoryInfo
     /// </summary>
     public virtual bool IsSupplyCenter => false;
 
+    TerritoryInfo Parsing.IParsable<TerritoryInfo>.Target => this;
+
     internal TerritoryInfo(string name, IEnumerable<string> abbreviations)
     {
         if (!abbreviations.Any())
@@ -44,7 +48,7 @@ public class TerritoryInfo
                 nameof(abbreviations));
 
         Name = name;
-        Abbreviations = abbreviations.ToArray();
-        Terrain = new UnsetTerrain();
+        Abbreviations = abbreviations.Distinct().ToArray();
+        Geography = new UnsetGeography();
     }
 }

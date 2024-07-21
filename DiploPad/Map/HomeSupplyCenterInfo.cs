@@ -1,7 +1,7 @@
 ﻿namespace DiploPad.Map;
 
 /// <summary>
-/// Territory info for a home supply center.
+/// ParseTerritory info for a home supply center.
 /// </summary>
 public class HomeSupplyCenterInfo : TerritoryInfo
 {
