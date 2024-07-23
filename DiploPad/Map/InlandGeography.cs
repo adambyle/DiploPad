@@ -1,5 +1,8 @@
 ﻿namespace DiploPad.Map;
 
+/// <summary>
+/// Geographical information about an inland territory.
+/// </summary>
 public class InlandGeography : IGeography
 {
     /// <summary>
@@ -12,6 +15,14 @@ public class InlandGeography : IGeography
     internal InlandGeography(IEnumerable<TerritoryInfo> landConnections)
     {
         LandConnections = landConnections.Distinct().ToArray();
+        TerritoryInfo? invalidLandConnection =
+            LandConnections
+            .FirstOrDefault(connection =>
+                connection.Geography is not InlandGeography or CoastalGeography);
+        if (invalidLandConnection is not null)
+            throw new ArgumentException(
+                $"Territory {invalidLandConnection.Name} is not an inland or coastal territory.",
+                nameof(landConnections));
     }
 
     public TravelResult CanTravelTo(
@@ -20,8 +31,8 @@ public class InlandGeography : IGeography
         string? startCoast = null,
         string? destinationCoast = null)
     {
-        bool canTravel = unitKind is UnitKind.Army
-            && LandConnections.Contains(destination);
+        bool canTravel = unitKind is UnitKind.Army &&
+            LandConnections.Contains(destination);
         return canTravel ? TravelResult.CanTravel : TravelResult.CannotTravel;
     }
 }

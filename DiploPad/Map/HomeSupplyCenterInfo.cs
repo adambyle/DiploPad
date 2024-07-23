@@ -37,7 +37,5 @@ public class HomeSupplyCenterInfo : TerritoryInfo
         HomeNation = homeNation;
         StartUnitKind = startUnitKind;
         StartUnitCoast = startUnitCoast;
-
-        // TODO when executing the map build, verify the start unit coasts.
     }
 }

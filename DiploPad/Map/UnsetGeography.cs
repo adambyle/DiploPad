@@ -11,6 +11,6 @@ internal class UnsetGeography : IGeography
         TerritoryInfo destination,
         UnitKind unitKind,
         string? startCoast = null,
-        string? destinationCoast = null)
-        => throw Error;
+        string? destinationCoast = null) =>
+            throw Error;
 }

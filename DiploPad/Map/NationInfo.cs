@@ -1,6 +1,4 @@
-﻿using DiploPad.Parsing;
-
-namespace DiploPad.Map;
+﻿namespace DiploPad.Map;
 
 /// <summary>
 /// Superficial information about a nation on the game board.

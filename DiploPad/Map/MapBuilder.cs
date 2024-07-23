@@ -2,6 +2,9 @@
 
 namespace DiploPad.Map;
 
+/// <summary>
+/// Type for building custom game maps.
+/// </summary>
 public class MapBuilder
 {
     private readonly List<NationInfo> _nations = [];
@@ -33,9 +36,9 @@ public class MapBuilder
         IEnumerable<string> landConnections)
     {
         TerritoryInfo territoryInfo =
-            isSupplyCenter
-            ? new TerritoryInfo(name, abbreviations)
-            : new SupplyCenterInfo(name, abbreviations);
+            isSupplyCenter ?
+                new TerritoryInfo(name, abbreviations) :
+                new SupplyCenterInfo(name, abbreviations);
 
         var geography = new UnresolvedInlandGeography(landConnections.ToArray());
 
@@ -68,9 +71,9 @@ public class MapBuilder
         IEnumerable<(string startCoast, string destination)> seaConnections)
     {
         TerritoryInfo territoryInfo =
-            isSupplyCenter
-            ? new TerritoryInfo(name, abbreviations)
-            : new SupplyCenterInfo(name, abbreviations);
+            isSupplyCenter ?
+                new TerritoryInfo(name, abbreviations) :
+                new SupplyCenterInfo(name, abbreviations);
 
         var geography = new UnresolvedCoastalGeography(
             coasts.ToArray(),

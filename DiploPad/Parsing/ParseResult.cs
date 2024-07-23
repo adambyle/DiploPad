@@ -50,6 +50,6 @@ public class ParseResult<T>
     /// Extract the result, expecting there to be only one.
     /// </summary>
     /// <returns>There is not exactly one result.</returns>
-    public T Expect()
-        => Expect($"Expected exactly one result from parse operation; got {Matches.Count}.");
+    public T Expect() =>
+        Expect($"Expected exactly one result from parse operation; got {Matches.Count}.");
 }

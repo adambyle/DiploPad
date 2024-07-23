@@ -6,6 +6,9 @@ using CoastalConnection = (
         string destinationCoast);
 using SeaConnection = (string startCoast, TerritoryInfo destination);
 
+/// <summary>
+/// Geographical information about a coastal territory.
+/// </summary>
 public class CoastalGeography : IGeography
 {
     /// <summary>
@@ -17,17 +20,23 @@ public class CoastalGeography : IGeography
     public IReadOnlyList<string> Coasts { get; }
 
     /// <summary>
-    /// A list of adjacent inland territories--not including land territories that are coastal.
+    /// A list of adjacent land territories, including coastal territories.
+    /// 
+    /// Armies can travel along land connections.
     /// </summary>
-    public IReadOnlyList<TerritoryInfo> InlandConnections { get; }
+    public IReadOnlyList<TerritoryInfo> LandConnections { get; }
 
     /// <summary>
     /// A list of adjacent land territories along a coast.
+    /// 
+    /// Fleets can travel along these coastal connections and along sea connections.
     /// </summary>
     public IReadOnlyList<CoastalConnection> CoastalConnections { get; }
 
     /// <summary>
     /// A list of adjacent sea territories.
+    /// 
+    /// Fleets can travel along these sea connections and along coastal connections.
     /// </summary>
     public IReadOnlyList<SeaConnection> SeaConnections { get; }
 
@@ -35,7 +44,7 @@ public class CoastalGeography : IGeography
 
     internal CoastalGeography(
         IEnumerable<string> coasts,
-        IEnumerable<TerritoryInfo> inlandConnections,
+        IEnumerable<TerritoryInfo> landConnections,
         IEnumerable<CoastalConnection> coastalConnections,
         IEnumerable<SeaConnection> seaConnections)
     {
@@ -52,7 +61,16 @@ public class CoastalGeography : IGeography
                     nameof(coasts));
         }
 
-        InlandConnections = inlandConnections.Distinct().ToArray();
+        LandConnections = landConnections.Distinct().ToArray();
+        TerritoryInfo? invalidLandConnection =
+            LandConnections
+            .FirstOrDefault(connection =>
+                connection.Geography is not InlandGeography or CoastalGeography);
+        if (invalidLandConnection is not null)
+            throw new ArgumentException(
+                $"Territory {invalidLandConnection.Name} is not an inland or coastal territory.",
+                nameof(landConnections));
+
         CoastalConnections =
             coastalConnections
             .Select(connection => (
@@ -61,6 +79,16 @@ public class CoastalGeography : IGeography
                 connection.destinationCoast.ToLower()))
             .Distinct()
             .ToArray();
+        TerritoryInfo? invalidCoastalConnection =
+            CoastalConnections
+            .Select(connection => connection.destination)
+            .FirstOrDefault(destination =>
+                destination.Geography is not CoastalGeography);
+        if (invalidCoastalConnection is not null)
+            throw new ArgumentException(
+                $"Territory {invalidCoastalConnection.Name} is not a coastal territory.",
+                nameof(coastalConnections));
+
         SeaConnections =
             seaConnections
             .Select(connection => (
@@ -68,6 +96,15 @@ public class CoastalGeography : IGeography
                 connection.destination))
             .Distinct()
             .ToArray();
+        TerritoryInfo? invalidSeaConnection =
+            SeaConnections
+            .Select(connection => connection.destination)
+            .FirstOrDefault(destination =>
+                destination.Geography is not SeaGeography);
+        if (invalidSeaConnection is not null)
+            throw new ArgumentException(
+                $"Territory {invalidSeaConnection.Name} is not a sea territory.",
+                nameof(seaConnections));
 
         IEnumerable<string> startCoasts =
             CoastalConnections
@@ -89,7 +126,7 @@ public class CoastalGeography : IGeography
     {
         if (unitKind is UnitKind.Army)
         {
-            bool canTravel = InlandConnections.Contains(destination);
+            bool canTravel = LandConnections.Contains(destination);
             return canTravel ? TravelResult.CanTravel : TravelResult.CannotTravel;
         }
 
@@ -109,9 +146,9 @@ public class CoastalGeography : IGeography
         {
             bool canTravelFromCoast =
                 SeaConnections
-                .Any(connection
-                    => connection.startCoast == startCoast
-                    && connection.destination == destination);
+                .Any(connection =>
+                    connection.startCoast == startCoast &&
+                        connection.destination == destination);
             return canTravelFromCoast ? TravelResult.CanTravel : TravelResult.CannotTravel;
         }
 
@@ -119,9 +156,9 @@ public class CoastalGeography : IGeography
 
         var possibleCoastalConnections =
             CoastalConnections
-            .Where(connection
-                => connection.startCoast == startCoast
-                && connection.destination == destination);
+            .Where(connection =>
+                connection.startCoast == startCoast &&
+                    connection.destination == destination);
 
         if (!possibleCoastalConnections.Any())
             return TravelResult.CannotTravel;

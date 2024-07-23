@@ -1,6 +1,4 @@
-﻿using DiploPad;
-
-namespace DiploPad.Map;
+﻿namespace DiploPad.Map;
 
 /// <summary>
 /// Superficial information about a territory and its relationship

@@ -17,5 +17,3 @@ public class NonOnlyParseException<T> : Exception
 
     public NonOnlyParseException(string message, Exception inner) : base(message, inner) { }
 }
-
-

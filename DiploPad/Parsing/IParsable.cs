@@ -10,5 +10,3 @@ public interface IParsable<T>
     /// </summary>
     T Target { get; }
 }
-
-

@@ -29,8 +29,8 @@ public static class Parser
             bool anyAbbreviationMatches =
                 territoryInfo
                 .Abbreviations
-                .Any(abbreviation
-                    => abbreviation.Equals(input, StringComparison.CurrentCultureIgnoreCase));
+                .Any(abbreviation =>
+                    abbreviation.Equals(input, StringComparison.CurrentCultureIgnoreCase));
             return anyAbbreviationMatches;
         }
 

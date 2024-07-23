@@ -30,7 +30,25 @@ public class SeaGeography : IGeography
                 connection.destinationCoast.ToLower()))
             .Distinct()
             .ToArray();
+        TerritoryInfo? invalidLandConnection =
+            LandConnections
+            .Select(connection => connection.destination)
+            .FirstOrDefault(destination =>
+                destination.Geography is not CoastalGeography);
+        if (invalidLandConnection is not null)
+            throw new ArgumentException(
+                $"Territory {invalidLandConnection.Name} is not a coastal territory.",
+                nameof(landConnections));
+
         SeaConnections = seaConnections.Distinct().ToArray();
+        TerritoryInfo? invalidSeaConnection =
+            SeaConnections
+            .FirstOrDefault(connection =>
+                connection.Geography is not SeaGeography);
+        if (invalidSeaConnection is not null)
+            throw new ArgumentException(
+                $"Territory {invalidSeaConnection.Name} is not a sea territory.",
+                nameof(landConnections));
     }
 
     public TravelResult CanTravelTo(
