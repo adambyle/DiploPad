@@ -34,6 +34,15 @@ public static class Parser
             return anyAbbreviationMatches;
         }
 
+        T? primaryAbbreviationMatch = sources.FirstOrDefault(source =>
+            source
+            .Target
+            .PrimaryAbbreviation
+            .Equals(input, StringComparison.CurrentCultureIgnoreCase));
+
+        if (primaryAbbreviationMatch is not null)
+            return new ParseResult<T>([primaryAbbreviationMatch]);
+
         var matches = sources.Where(TerritoryMatches);
         return new ParseResult<T>(matches);
     }

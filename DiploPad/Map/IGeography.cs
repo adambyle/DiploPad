@@ -29,4 +29,9 @@ public interface IGeography
         UnitKind unitKind,
         string? startCoast = null,
         string? destinationCoast = null);
+
+    /// <summary>
+    /// Verify whether the connections are to valid territory terrains.
+    /// </summary>
+    void VerifyConnections();
 }

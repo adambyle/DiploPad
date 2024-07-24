@@ -15,11 +15,18 @@ public class MapBuilder
     /// </summary>
     /// <param name="names">The names used to identify the nation.</param>
     /// <returns>The MapBuilder object for method chaining.</returns>
-    public MapBuilder AddNation(IEnumerable<string> names)
+    public MapBuilder AddNation(params string[] names)
     {
-        _nations.Add(new NationInfo(names));
+        _nations.Add(new NationInfo(names.ToArray()));
         return this;
     }
+
+    /// <summary>
+    /// Add a nation to the map.
+    /// </summary>
+    /// <param name="name">The nation's name.</param>
+    /// <returns>The MapBuilder object for method chaining.</returns>
+    public MapBuilder AddNation(string name) => AddNation([name]);
 
     /// <summary>
     /// Add an inland territory to the map (non home supply center).
@@ -54,7 +61,7 @@ public class MapBuilder
     /// <param name="abbreviations">The abbreviations used to identify the territory.</param>
     /// <param name="coasts">The names of the coasts ("main" if just one).</param>
     /// <param name="isSupplyCenter">Whether this is a supply center (non-home).</param>
-    /// <param name="inlandConnections">The inland territories connected to this one.</param>
+    /// <param name="landConnections">The inland and coastal territories connected to this one.</param>
     /// <param name="coastalConnections">The coastal territories connected to this one.</param>
     /// <param name="seaConnections">The sea territories connected to this one.</param>
     /// <returns>The MapBuilder object for method chaining.</returns>
@@ -63,7 +70,7 @@ public class MapBuilder
         IEnumerable<string> abbreviations,
         IEnumerable<string> coasts,
         bool isSupplyCenter,
-        IEnumerable<string> inlandConnections,
+        IEnumerable<string> landConnections,
         IEnumerable<(
             string startCoast,
             string destination,
@@ -77,7 +84,7 @@ public class MapBuilder
 
         var geography = new UnresolvedCoastalGeography(
             coasts.ToArray(),
-            inlandConnections.ToArray(),
+            landConnections.ToArray(),
             coastalConnections.ToArray(),
             seaConnections.ToArray());
 
@@ -149,7 +156,7 @@ public class MapBuilder
     /// <param name="name">The name of the territory.</param>
     /// <param name="abbreviations">The abbreviations used to identify the territory.</param>
     /// <param name="coasts">The names of the coasts ("main" if just one).</param>
-    /// <param name="inlandConnections">The inland territories connected to this one.</param>
+    /// <param name="landConnections">The inland and coastal territories connected to this one.</param>
     /// <param name="coastalConnections">The coastal territories connected to this one.</param>
     /// <param name="seaConnections">The sea territories connected to this one.</param>
     /// <param name="nation">The nation this center belongs to.</param>
@@ -159,7 +166,7 @@ public class MapBuilder
         string name,
         IEnumerable<string> abbreviations,
         IEnumerable<string> coasts,
-        IEnumerable<string> inlandConnections,
+        IEnumerable<string> landConnections,
         IEnumerable<(
             string startCoast,
             string destination,
@@ -183,7 +190,7 @@ public class MapBuilder
 
         var geography = new UnresolvedCoastalGeography(
             coasts.ToArray(),
-            inlandConnections.ToArray(),
+            landConnections.ToArray(),
             coastalConnections.ToArray(),
             seaConnections.ToArray());
 
@@ -203,8 +210,8 @@ public class MapBuilder
             _nations
             .SelectMany(nation => nation.Names)
             .GroupBy(name => name.ToLower())
-            .First(group => group.Count() > 1)
-            ?.First();
+            .FirstOrDefault(group => group.Count() > 1)
+            ?.FirstOrDefault();
         if (duplicateNationName is not null)
             throw new MapBuilderException(
                 $"Nation name \"${duplicateNationName}\" is used more than once.")
@@ -216,8 +223,8 @@ public class MapBuilder
             _territories
             .Select(territory => territory.Item1.Name)
             .GroupBy(name => name.ToLower())
-            .First(group => group.Count() > 1)
-            ?.First();
+            .FirstOrDefault(group => group.Count() > 1)
+            ?.FirstOrDefault();
         if (duplicateTerritoryName is not null)
             throw new MapBuilderException(
                 $"Territory name \"${duplicateTerritoryName}\" is used more than once.")
@@ -227,10 +234,10 @@ public class MapBuilder
 
         string? duplicateTerritoryAbbr =
             _territories
-            .SelectMany(territory => territory.Item1.Abbreviations)
+            .Select(territory => territory.Item1.PrimaryAbbreviation)
             .GroupBy(abbr => abbr.ToLower())
-            .First(group => group.Count() > 1)
-            ?.First();
+            .FirstOrDefault(group => group.Count() > 1)
+            ?.FirstOrDefault();
         if (duplicateTerritoryAbbr is not null)
             throw new MapBuilderException(
                 $"Territory abbreviation \"${duplicateTerritoryAbbr}\" is used more than once.")
@@ -277,7 +284,7 @@ public class MapBuilder
                 foreach (var (startCoast, destination, destinationCoast)
                     in coastalGeography.CoastalConnections)
                 {
-                    // Coastal inlandConnections will always have coastal geography.
+                    // Coastal landConnections will always have coastal geography.
                     var destinationGeography =
                         destination.Geography as CoastalGeography;
                     bool coastExists = destinationGeography!.Coasts.Contains(destinationCoast);
@@ -295,7 +302,7 @@ public class MapBuilder
                 foreach (var (destination, destinationCoast)
                     in seaGeography.LandConnections)
                 {
-                    // Land inlandConnections will always have coastal geography.
+                    // Land landConnections will always have coastal geography.
                     var destinationGeography =
                         destination.Geography as CoastalGeography;
                     bool coastExists = destinationGeography!.Coasts.Contains(destinationCoast);
@@ -343,7 +350,7 @@ public class MapBuilder
 
     private record UnresolvedCoastalGeography(
         string[] Coasts,
-        string[] InlandConnections,
+        string[] LandConnections,
         (string startCoast, string territory, string destinationCoast)[] CoastalConnections,
         (string startCoast, string territory)[] SeaConnections) : IUnresolvedGeography
     {
@@ -351,8 +358,8 @@ public class MapBuilder
         {
             var resolver = IUnresolvedGeography.GetResolver(territories);
 
-            var inlandConnections =
-                InlandConnections
+            var landConnections =
+                LandConnections
                 .Select(resolver);
             var coastalConnections =
                 CoastalConnections
@@ -368,7 +375,7 @@ public class MapBuilder
 
             return new CoastalGeography(
                 Coasts,
-                inlandConnections,
+                landConnections,
                 coastalConnections,
                 seaConnections);
         }

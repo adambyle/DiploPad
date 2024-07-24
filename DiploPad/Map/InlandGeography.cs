@@ -15,14 +15,6 @@ public class InlandGeography : IGeography
     internal InlandGeography(IEnumerable<TerritoryInfo> landConnections)
     {
         LandConnections = landConnections.Distinct().ToArray();
-        TerritoryInfo? invalidLandConnection =
-            LandConnections
-            .FirstOrDefault(connection =>
-                connection.Geography is not InlandGeography or CoastalGeography);
-        if (invalidLandConnection is not null)
-            throw new ArgumentException(
-                $"Territory {invalidLandConnection.Name} is not an inland or coastal territory.",
-                nameof(landConnections));
     }
 
     public TravelResult CanTravelTo(
@@ -34,5 +26,19 @@ public class InlandGeography : IGeography
         bool canTravel = unitKind is UnitKind.Army &&
             LandConnections.Contains(destination);
         return canTravel ? TravelResult.CanTravel : TravelResult.CannotTravel;
+    }
+
+    public void VerifyConnections()
+    {
+        TerritoryInfo? invalidLandConnection =
+            LandConnections
+            .FirstOrDefault(connection =>
+                connection.Geography is not InlandGeography or CoastalGeography);
+        if (invalidLandConnection is not null)
+            throw new TerrainMismatchException(
+                $"Territory {invalidLandConnection.Name} is not an inland or coastal territory.")
+            {
+                BadTerritory = invalidLandConnection,
+            };
     }
 }

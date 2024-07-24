@@ -62,15 +62,6 @@ public class CoastalGeography : IGeography
         }
 
         LandConnections = landConnections.Distinct().ToArray();
-        TerritoryInfo? invalidLandConnection =
-            LandConnections
-            .FirstOrDefault(connection =>
-                connection.Geography is not InlandGeography or CoastalGeography);
-        if (invalidLandConnection is not null)
-            throw new ArgumentException(
-                $"Territory {invalidLandConnection.Name} is not an inland or coastal territory.",
-                nameof(landConnections));
-
         CoastalConnections =
             coastalConnections
             .Select(connection => (
@@ -79,16 +70,6 @@ public class CoastalGeography : IGeography
                 connection.destinationCoast.ToLower()))
             .Distinct()
             .ToArray();
-        TerritoryInfo? invalidCoastalConnection =
-            CoastalConnections
-            .Select(connection => connection.destination)
-            .FirstOrDefault(destination =>
-                destination.Geography is not CoastalGeography);
-        if (invalidCoastalConnection is not null)
-            throw new ArgumentException(
-                $"Territory {invalidCoastalConnection.Name} is not a coastal territory.",
-                nameof(coastalConnections));
-
         SeaConnections =
             seaConnections
             .Select(connection => (
@@ -96,15 +77,6 @@ public class CoastalGeography : IGeography
                 connection.destination))
             .Distinct()
             .ToArray();
-        TerritoryInfo? invalidSeaConnection =
-            SeaConnections
-            .Select(connection => connection.destination)
-            .FirstOrDefault(destination =>
-                destination.Geography is not SeaGeography);
-        if (invalidSeaConnection is not null)
-            throw new ArgumentException(
-                $"Territory {invalidSeaConnection.Name} is not a sea territory.",
-                nameof(seaConnections));
 
         IEnumerable<string> startCoasts =
             CoastalConnections
@@ -112,7 +84,7 @@ public class CoastalGeography : IGeography
             .Concat(
                 SeaConnections.Select(connection => connection.startCoast))
             .Distinct();
-        string? invalidStartCoast = startCoasts.First(coast => !coast.Contains(coast));
+        string? invalidStartCoast = startCoasts.FirstOrDefault(coast => !coast.Contains(coast));
         if (invalidStartCoast is not null)
             throw new ArgumentException(
                 $"Invalid coast given as start coast: {invalidStartCoast}.");
@@ -178,5 +150,43 @@ public class CoastalGeography : IGeography
                 .Any(connection => connection.destinationCoast == destinationCoast);
             return matchExists ? TravelResult.CanTravel : TravelResult.CannotTravel;
         }
+    }
+
+    public void VerifyConnections()
+    {
+        TerritoryInfo? invalidLandConnection =
+            LandConnections
+            .FirstOrDefault(connection =>
+                connection.Geography is not InlandGeography or CoastalGeography);
+        if (invalidLandConnection is not null)
+            throw new TerrainMismatchException(
+                $"Territory {invalidLandConnection.Name} is not an inland or coastal territory.")
+            {
+                BadTerritory = invalidLandConnection,
+            };
+
+        TerritoryInfo? invalidCoastalConnection =
+            CoastalConnections
+            .Select(connection => connection.destination)
+            .FirstOrDefault(destination =>
+                destination.Geography is not CoastalGeography);
+        if (invalidCoastalConnection is not null)
+            throw new TerrainMismatchException(
+                $"Territory {invalidCoastalConnection.Name} is not a coastal territory.")
+            {
+                BadTerritory = invalidCoastalConnection,
+            };
+
+        TerritoryInfo? invalidSeaConnection =
+            SeaConnections
+            .Select(connection => connection.destination)
+            .FirstOrDefault(destination =>
+                destination.Geography is not SeaGeography);
+        if (invalidSeaConnection is not null)
+            throw new TerrainMismatchException(
+                $"Territory {invalidSeaConnection.Name} is not a sea territory.")
+            {
+                BadTerritory = invalidSeaConnection,
+            };
     }
 }

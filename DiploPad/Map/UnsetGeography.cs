@@ -13,4 +13,6 @@ internal class UnsetGeography : IGeography
         string? startCoast = null,
         string? destinationCoast = null) =>
             throw Error;
+
+    public void VerifyConnections() => throw Error;
 }
