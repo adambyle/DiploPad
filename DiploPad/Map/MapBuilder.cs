@@ -17,7 +17,7 @@ public class MapBuilder
     /// <returns>The MapBuilder object for method chaining.</returns>
     public MapBuilder AddNation(params string[] names)
     {
-        _nations.Add(new NationInfo(names.ToArray()));
+        _nations.Add(new NationInfo([.. names]));
         return this;
     }
 

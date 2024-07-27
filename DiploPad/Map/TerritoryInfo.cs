@@ -6,7 +6,7 @@
 /// 
 /// This class never includes any game instance data.
 /// </summary>
-public class TerritoryInfo : Parsing.IParsable<TerritoryInfo>
+public class TerritoryInfo
 {
     /// <summary>
     /// The name of the territory, with proper capitalization,
@@ -35,8 +35,6 @@ public class TerritoryInfo : Parsing.IParsable<TerritoryInfo>
     /// Whether this territory is a supply center.
     /// </summary>
     public virtual bool IsSupplyCenter => false;
-
-    TerritoryInfo Parsing.IParsable<TerritoryInfo>.Target => this;
 
     internal TerritoryInfo(string name, IEnumerable<string> abbreviations)
     {

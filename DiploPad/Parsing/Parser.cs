@@ -8,68 +8,59 @@ namespace DiploPad.Parsing;
 public static class Parser
 {
     /// <summary>
-    /// Parse a territory-like object from user input;
+    /// Parse a territory from user input;
     /// </summary>
-    /// <typeparam name="T">The territory-like type.</typeparam>
     /// <param name="input">The user input string.</param>
     /// <param name="sources">The territories to check against.</param>
     /// <returns>The result of the parse.</returns>
-    public static ParseResult<T> ParseTerritory<T>(
+    public static ParseResult<TerritoryInfo> ParseTerritory(
         string input,
-        IEnumerable<T> sources)
-        where T : IParsable<TerritoryInfo>
+        IEnumerable<TerritoryInfo> sources)
     {
-        bool TerritoryMatches(T source)
+        bool TerritoryMatches(TerritoryInfo source)
         {
-            TerritoryInfo territoryInfo = source.Target;
-
-            if (territoryInfo.Name.StartsWith(input, StringComparison.CurrentCultureIgnoreCase))
+            if (source.Name.StartsWith(input, StringComparison.CurrentCultureIgnoreCase))
                 return true;
 
             bool anyAbbreviationMatches =
-                territoryInfo
+                source
                 .Abbreviations
                 .Any(abbreviation =>
                     abbreviation.Equals(input, StringComparison.CurrentCultureIgnoreCase));
             return anyAbbreviationMatches;
         }
 
-        T? primaryAbbreviationMatch = sources.FirstOrDefault(source =>
+        TerritoryInfo? primaryAbbreviationMatch = sources.FirstOrDefault(source =>
             source
-            .Target
             .PrimaryAbbreviation
             .Equals(input, StringComparison.CurrentCultureIgnoreCase));
 
         if (primaryAbbreviationMatch is not null)
-            return new ParseResult<T>([primaryAbbreviationMatch]);
+            return new ParseResult<TerritoryInfo>([primaryAbbreviationMatch]);
 
         var matches = sources.Where(TerritoryMatches);
-        return new ParseResult<T>(matches);
+        return new ParseResult<TerritoryInfo>(matches);
     }
     /// <summary>
-    /// Parse a nation-like object from user input;
+    /// Parse a nation from user input;
     /// </summary>
-    /// <typeparam name="T">The nation-like type.</typeparam>
     /// <param name="input">The user input string.</param>
     /// <param name="sources">The nations to check against.</param>
     /// <returns>The result of the parse.</returns>
-    public static ParseResult<T> ParseNation<T>(
+    public static ParseResult<NationInfo> ParseNation(
         string input,
-        IEnumerable<T> sources)
-        where T : IParsable<NationInfo>
+        IEnumerable<NationInfo> sources)
     {
-        bool NationMatches(T source)
+        bool NationMatches(NationInfo source)
         {
-            NationInfo nationInfo = source.Target;
-
             bool anyNameMatches =
-                nationInfo
+                source
                 .Names
                 .Any(name => name.Equals(input, StringComparison.CurrentCultureIgnoreCase));
             return anyNameMatches;
         }
 
         var matches = sources.Where(NationMatches);
-        return new ParseResult<T>(matches);
+        return new ParseResult<NationInfo>(matches);
     }
 }
