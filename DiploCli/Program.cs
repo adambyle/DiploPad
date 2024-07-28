@@ -1,4 +1,4 @@
-﻿using DiploPad.Map;
+﻿using DiploPad.Geography;
 
 Map _ = Map.Default();
 

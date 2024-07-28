@@ -1,30 +1,30 @@
 ﻿using DiploPad.Parsing;
 
-namespace DiploPad.Map;
+namespace DiploPad.Geography;
 
 /// <summary>
 /// Type for building custom game maps.
 /// </summary>
 public class MapBuilder
 {
-    private readonly List<NationInfo> _nations = [];
-    private readonly List<(TerritoryInfo, IUnresolvedGeography)> _territories = [];
+    private readonly List<Nation> _nations = [];
+    private readonly List<(Territory, IUnresolvedGeography)> _territories = [];
 
     /// <summary>
-    /// Add a nation to the map.
+    /// Add a nationName to the map.
     /// </summary>
-    /// <param name="names">The names used to identify the nation.</param>
+    /// <param name="names">The names used to identify the nationName.</param>
     /// <returns>The MapBuilder object for method chaining.</returns>
     public MapBuilder AddNation(params string[] names)
     {
-        _nations.Add(new NationInfo([.. names]));
+        _nations.Add(new Nation([.. names]));
         return this;
     }
 
     /// <summary>
-    /// Add a nation to the map.
+    /// Add a nationName to the map.
     /// </summary>
-    /// <param name="name">The nation's name.</param>
+    /// <param name="name">The nationName's name.</param>
     /// <returns>The MapBuilder object for method chaining.</returns>
     public MapBuilder AddNation(string name) => AddNation([name]);
 
@@ -42,14 +42,14 @@ public class MapBuilder
         bool isSupplyCenter,
         IEnumerable<string> landConnections)
     {
-        TerritoryInfo territoryInfo =
+        Territory territory =
             isSupplyCenter ?
-                new TerritoryInfo(name, abbreviations) :
-                new SupplyCenterInfo(name, abbreviations);
+                new Territory(name, abbreviations) :
+                new SupplyCenter(name, abbreviations);
 
         var geography = new UnresolvedInlandGeography(landConnections.ToArray());
 
-        _territories.Add((territoryInfo, geography));
+        _territories.Add((territory, geography));
 
         return this;
     }
@@ -77,10 +77,10 @@ public class MapBuilder
             string destinationCoast)> coastalConnections,
         IEnumerable<(string startCoast, string destination)> seaConnections)
     {
-        TerritoryInfo territoryInfo =
+        Territory territory =
             isSupplyCenter ?
-                new TerritoryInfo(name, abbreviations) :
-                new SupplyCenterInfo(name, abbreviations);
+                new Territory(name, abbreviations) :
+                new SupplyCenter(name, abbreviations);
 
         var geography = new UnresolvedCoastalGeography(
             coasts.ToArray(),
@@ -88,7 +88,7 @@ public class MapBuilder
             coastalConnections.ToArray(),
             seaConnections.ToArray());
 
-        _territories.Add((territoryInfo, geography));
+        _territories.Add((territory, geography));
 
         return this;
     }
@@ -107,13 +107,13 @@ public class MapBuilder
         IEnumerable<(string destination, string destinationCoast)> landConnections,
         IEnumerable<string> seaConnections)
     {
-        TerritoryInfo territoryInfo = new(name, abbreviations);
+        Territory territory = new(name, abbreviations);
 
         var geography = new UnresolvedSeaGeography(
             landConnections.ToArray(),
             seaConnections.ToArray());
 
-        _territories.Add((territoryInfo, geography));
+        _territories.Add((territory, geography));
 
         return this;
     }
@@ -124,28 +124,28 @@ public class MapBuilder
     /// <param name="name">The name of the territory.</param>
     /// <param name="abbreviations">The abbreviations used to identify the territory.</param>
     /// <param name="landConnections">The land territories connected to this one.</param>
-    /// <param name="nation">The nation this center belongs to.</param>
+    /// <param name="nation">The nationName this center belongs to.</param>
     /// <returns>The MapBuilder object for method chaining.</returns>
     public MapBuilder AddInlandHomeSupplyCenter(
         string name,
         IEnumerable<string> abbreviations,
         IEnumerable<string> landConnections,
-        string nation)
+        string nationName)
     {
-        NationInfo nationInfo =
+        Nation nation =
             Parser
-            .ParseNation(nation, _nations)
-            .Expect($"Unknown nation {nation}.");
+            .ParseNation(nationName, _nations)
+            .Expect($"Unknown nation {nationName}.");
 
-        TerritoryInfo territoryInfo = new HomeSupplyCenterInfo(
+        Territory territory = new HomeSupplyCenter(
             name,
             abbreviations,
-            nationInfo,
+            nation,
             UnitKind.Army);
 
         var geography = new UnresolvedInlandGeography(landConnections.ToArray());
 
-        _territories.Add((territoryInfo, geography));
+        _territories.Add((territory, geography));
 
         return this;
     }
@@ -159,7 +159,7 @@ public class MapBuilder
     /// <param name="landConnections">The inland and coastal territories connected to this one.</param>
     /// <param name="coastalConnections">The coastal territories connected to this one.</param>
     /// <param name="seaConnections">The sea territories connected to this one.</param>
-    /// <param name="nation">The nation this center belongs to.</param>
+    /// <param name="nationName">The nation this center belongs to.</param>
     /// <param name="startUnitCoast">The coast the unit starts on.</param>
     /// <returns></returns>
     public MapBuilder AddCoastalHomeSupplyCenter(
@@ -172,19 +172,19 @@ public class MapBuilder
             string destination,
             string destinationCoast)> coastalConnections,
         IEnumerable<(string startCoast, string destination)> seaConnections,
-        string nation,
+        string nationName,
         string? startUnitCoast = null)
     {
-        NationInfo nationInfo =
+        Nation nation =
             Parser
-            .ParseNation(nation, _nations)
-            .Expect($"Unknown nation {nation}.");
+            .ParseNation(nationName, _nations)
+            .Expect($"Unknown nation {nationName}.");
 
         UnitKind startUnitKind = startUnitCoast is null ? UnitKind.Army : UnitKind.Fleet;
-        TerritoryInfo territoryInfo = new HomeSupplyCenterInfo(
+        Territory territory = new HomeSupplyCenter(
             name,
             abbreviations,
-            nationInfo,
+            nation,
             startUnitKind,
             startUnitCoast);
 
@@ -194,7 +194,7 @@ public class MapBuilder
             coastalConnections.ToArray(),
             seaConnections.ToArray());
 
-        _territories.Add((territoryInfo, geography));
+        _territories.Add((territory, geography));
 
         return this;
     }
@@ -245,19 +245,19 @@ public class MapBuilder
                 DuplicateNameOrAbbr = duplicateTerritoryAbbr,
             };
 
-        var territoryInfos = _territories.Select(territory => territory.Item1);
+        var territories = _territories.Select(territory => territory.Item1);
 
         // At this point, connection information is just strings.
         // "Resolving" the geographies means finding the territory objects
         // associated with each string. They are not yet tested for validity.
         foreach ((var territory, var unresolvedGeography) in _territories)
-            territory.Geography = unresolvedGeography.ResolveGeography(territoryInfos);
+            territory.Geography = unresolvedGeography.ResolveGeography(territories);
 
-        foreach (var territory in territoryInfos)
+        foreach (var territory in territories)
         {
             var geography = territory.Geography;
 
-            if (territory is HomeSupplyCenterInfo homeSupplyCenter)
+            if (territory is HomeSupplyCenter homeSupplyCenter)
             {
                 // It is guaranteed during construction that if a fleet starts here,
                 // the territory is coastal and the startUnitCoast value is present.
@@ -317,15 +317,15 @@ public class MapBuilder
             }
         }
 
-        return new Map(_nations, territoryInfos);
+        return new Map(_nations, territories);
     }
 
     private interface IUnresolvedGeography
     {
-        IGeography ResolveGeography(IEnumerable<TerritoryInfo> territories);
+        IGeography ResolveGeography(IEnumerable<Territory> territories);
 
-        protected static sealed Func<string, TerritoryInfo> GetResolver(
-            IEnumerable<TerritoryInfo> territories)
+        protected static sealed Func<string, Territory> GetResolver(
+            IEnumerable<Territory> territories)
         {
             return (string territory) =>
                 Parser
@@ -336,7 +336,7 @@ public class MapBuilder
 
     private record UnresolvedInlandGeography(string[] LandConnections) : IUnresolvedGeography
     {
-        public IGeography ResolveGeography(IEnumerable<TerritoryInfo> territories)
+        public IGeography ResolveGeography(IEnumerable<Territory> territories)
         {
             var resolver = IUnresolvedGeography.GetResolver(territories);
 
@@ -354,7 +354,7 @@ public class MapBuilder
         (string startCoast, string territory, string destinationCoast)[] CoastalConnections,
         (string startCoast, string territory)[] SeaConnections) : IUnresolvedGeography
     {
-        public IGeography ResolveGeography(IEnumerable<TerritoryInfo> territories)
+        public IGeography ResolveGeography(IEnumerable<Territory> territories)
         {
             var resolver = IUnresolvedGeography.GetResolver(territories);
 
@@ -385,7 +385,7 @@ public class MapBuilder
         (string territory, string destinationCoast)[] LandConnections,
         string[] SeaConnections) : IUnresolvedGeography
     {
-        public IGeography ResolveGeography(IEnumerable<TerritoryInfo> territories)
+        public IGeography ResolveGeography(IEnumerable<Territory> territories)
         {
             var resolver = IUnresolvedGeography.GetResolver(territories);
 

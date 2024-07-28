@@ -1,4 +1,4 @@
-﻿namespace DiploPad.Map;
+﻿namespace DiploPad.Geography;
 
 /// <summary>
 /// Geographical information about a territory on the map.
@@ -25,7 +25,7 @@ public interface IGeography
     /// </param>
     /// <returns></returns>
     TravelResult CanTravelTo(
-        TerritoryInfo destination,
+        Territory destination,
         UnitKind unitKind,
         string? startCoast = null,
         string? destinationCoast = null);

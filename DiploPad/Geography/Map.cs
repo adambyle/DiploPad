@@ -1,6 +1,4 @@
-﻿using System.Runtime.Serialization;
-
-namespace DiploPad.Map;
+﻿namespace DiploPad.Geography;
 
 /// <summary>
 /// Information about a game map, including its territories and the connections between them,
@@ -11,14 +9,26 @@ public class Map
     /// <summary>
     /// The map's nations.
     /// </summary>
-    public IReadOnlyList<NationInfo> Nations { get; set; }
+    public IReadOnlyList<Nation> Nations { get; set; }
 
     /// <summary>
     /// The map's territories.
     /// </summary>
-    public IReadOnlyList<TerritoryInfo> Territories;
+    public IReadOnlyList<Territory> Territories;
 
-    internal Map(IEnumerable<NationInfo> nations, IEnumerable<TerritoryInfo> territories)
+    /// <summary>
+    /// The map's home supply centers.
+    /// </summary>
+    public IEnumerable<HomeSupplyCenter> HomeSupplyCenters =>
+        Territories.OfType<HomeSupplyCenter>();
+
+    /// <summary>
+    /// The map's supply centers.
+    /// </summary>
+    public IEnumerable<SupplyCenter> SupplyCenters =>
+        Territories.OfType<SupplyCenter>();
+
+    internal Map(IEnumerable<Nation> nations, IEnumerable<Territory> territories)
     {
         Nations = nations.ToArray();
         Territories = territories.ToArray();
@@ -79,7 +89,7 @@ public class Map
                 ("main", "Arm", "main"),
                 ("main", "Con", "main")],
             seaConnections: [("main", "BLA")],
-            nation: "Turkey",
+            nationName: "Turkey",
             startUnitCoast: "main");
 
         builder.AddCoastalTerritory(
@@ -148,7 +158,7 @@ public class Map
                 ("main", "Kie", "main"),
                 ("main", "Pru", "main")],
             seaConnections: [("main", "BAL")],
-            nation: "Germany");
+            nationName: "Germany");
 
         builder.AddSeaTerritory(
             "Black Sea",
@@ -179,14 +189,14 @@ public class Map
             seaConnections: [
                 ("main", "ENG"),
                 ("main", "MAO")],
-            nation: "France",
+            nationName: "France",
             startUnitCoast: "main");
 
         builder.AddInlandHomeSupplyCenter(
             "Budapest",
             ["Bud"],
             landConnections: ["Gal", "Rum", "Ser", "Tri", "Vie"],
-            nation: "Austria");
+            nationName: "Austria");
 
         builder.AddCoastalTerritory(
             "Bulgaria",
@@ -235,7 +245,7 @@ public class Map
             seaConnections: [
                 ("main", "AEG"),
                 ("main", "BLA")],
-            nation: "Turkey");
+            nationName: "Turkey");
 
         builder.AddCoastalTerritory(
             "Denmark",
@@ -271,7 +281,7 @@ public class Map
             seaConnections: [
                 ("main", "NTH"),
                 ("main", "NWG")],
-            nation: "England",
+            nationName: "England",
             startUnitCoast: "main");
 
         builder.AddSeaTerritory(
@@ -398,7 +408,7 @@ public class Map
             seaConnections: [
                 ("main", "BAL"),
                 ("main", "HEL")],
-            nation: "Germany",
+            nationName: "Germany",
             startUnitCoast: "main");
 
         builder.AddCoastalHomeSupplyCenter(
@@ -412,7 +422,7 @@ public class Map
             seaConnections: [
                 ("main", "IRI"),
                 ("main", "NAO")],
-            nation: "England");
+            nationName: "England");
 
         builder.AddCoastalTerritory(
             "Livonia",
@@ -438,7 +448,7 @@ public class Map
             seaConnections: [
                 ("main", "ENG"),
                 ("main", "NTH")],
-            nation: "England",
+            nationName: "England",
             startUnitCoast: "main");
 
         builder.AddCoastalHomeSupplyCenter(
@@ -451,7 +461,7 @@ public class Map
                 ("main", "Spa", "south")],
             seaConnections: [
                 ("main", "LYO")],
-            nation: "France",
+            nationName: "France",
             startUnitCoast: "main");
 
         builder.AddSeaTerritory(
@@ -469,13 +479,13 @@ public class Map
             "Moscow",
             ["Mos"],
             landConnections: ["Lvn", "Sev", "StP", "Ukr", "War"],
-            nation: "Russia");
+            nationName: "Russia");
 
         builder.AddInlandHomeSupplyCenter(
             "Munich",
             ["Mun"],
             landConnections: ["Boh", "Ber", "Bur", "Kie", "Ruh", "Sil", "Tyr"],
-            nation: "Germany");
+            nationName: "Germany");
 
         builder.AddCoastalHomeSupplyCenter(
             "Naples",
@@ -488,7 +498,7 @@ public class Map
             seaConnections: [
                 ("main", "ION"),
                 ("main", "TYS")],
-            nation: "Italy",
+            nationName: "Italy",
             startUnitCoast: "main");
 
         builder.AddCoastalTerritory(
@@ -551,7 +561,7 @@ public class Map
             "Paris",
             ["Par"],
             landConnections: ["Bre", "Bur", "Gas", "Pic"],
-            nation: "France");
+            nationName: "France");
 
         builder.AddCoastalTerritory(
             "Picardy",
@@ -606,7 +616,7 @@ public class Map
                 ("main", "Nap", "main"),
                 ("main", "Tus", "main")],
             seaConnections: [("main", "TYS")],
-            nation: "Italy");
+            nationName: "Italy");
 
         builder.AddInlandTerritory(
             "Ruhr",
@@ -640,7 +650,7 @@ public class Map
                 ("main", "Arm", "main"),
                 ("main", "Rum", "main")],
             seaConnections: [("main", "BLA")],
-            nation: "Russia",
+            nationName: "Russia",
             startUnitCoast: "main");
 
         builder.AddInlandTerritory(
@@ -667,7 +677,7 @@ public class Map
                 ("main", "Arm", "main"),
                 ("main", "Con", "main")],
             seaConnections: [("main", "BLA")],
-            nation: "Turkey",
+            nationName: "Turkey",
             startUnitCoast: "main");
 
         builder.AddCoastalTerritory(
@@ -698,7 +708,7 @@ public class Map
             seaConnections: [
                 ("north", "BAR"),
                 ("south", "BOT")],
-            nation: "Russia",
+            nationName: "Russia",
             startUnitCoast: "south");
 
         builder.AddCoastalTerritory(
@@ -734,7 +744,7 @@ public class Map
                 ("main", "Alb", "main"),
                 ("main", "Ven", "main")],
             seaConnections: [("main", "ADR")],
-            nation: "Austria",
+            nationName: "Austria",
             startUnitCoast: "main");
 
         builder.AddCoastalTerritory(
@@ -793,13 +803,13 @@ public class Map
                 ("main", "Apu", "main"),
                 ("main", "Tri", "main")],
             seaConnections: [("main", "ADR")],
-            nation: "Italy");
+            nationName: "Italy");
 
         builder.AddInlandHomeSupplyCenter(
             "Vienna",
             ["Vie"],
             landConnections: ["Boh", "Bud", "Gal", "Tri", "Tyr"],
-            nation: "Austria");
+            nationName: "Austria");
 
         builder.AddCoastalTerritory(
             "Wales",
@@ -818,7 +828,7 @@ public class Map
             "Warsaw",
             ["War"],
             landConnections: ["Gal", "Lvn", "Mos", "Pru", "Sil", "Ukr"],
-            nation: "Russia");
+            nationName: "Russia");
 
         builder.AddSeaTerritory(
             "Western Mediterranean",

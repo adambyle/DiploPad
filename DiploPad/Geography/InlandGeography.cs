@@ -1,4 +1,4 @@
-﻿namespace DiploPad.Map;
+﻿namespace DiploPad.Geography;
 
 /// <summary>
 /// Geographical information about an inland territory.
@@ -8,17 +8,17 @@ public class InlandGeography : IGeography
     /// <summary>
     /// A list of adjacent land territories.
     /// </summary>
-    public IReadOnlyList<TerritoryInfo> LandConnections { get; }
+    public IReadOnlyList<Territory> LandConnections { get; }
 
     public Terrain Terrain => Terrain.Inland;
 
-    internal InlandGeography(IEnumerable<TerritoryInfo> landConnections)
+    internal InlandGeography(IEnumerable<Territory> landConnections)
     {
         LandConnections = landConnections.Distinct().ToArray();
     }
 
     public TravelResult CanTravelTo(
-        TerritoryInfo destination,
+        Territory destination,
         UnitKind unitKind,
         string? startCoast = null,
         string? destinationCoast = null)
@@ -30,7 +30,7 @@ public class InlandGeography : IGeography
 
     public void VerifyConnections()
     {
-        TerritoryInfo? invalidLandConnection =
+        Territory? invalidLandConnection =
             LandConnections
             .FirstOrDefault(connection =>
                 connection.Geography is not InlandGeography or CoastalGeography);

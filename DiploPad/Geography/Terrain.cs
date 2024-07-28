@@ -1,4 +1,4 @@
-﻿namespace DiploPad.Map;
+﻿namespace DiploPad.Geography;
 
 /// <summary>
 /// The type of geography a territory has.

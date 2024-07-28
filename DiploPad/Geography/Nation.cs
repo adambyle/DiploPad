@@ -1,11 +1,11 @@
-﻿namespace DiploPad.Map;
+﻿namespace DiploPad.Geography;
 
 /// <summary>
 /// Superficial information about a nation on the game board.
 /// 
 /// This class never includes any game instance data.
 /// </summary>
-public class NationInfo
+public class Nation
 {
     /// <summary>
     /// A list of names that identify this nation.
@@ -17,7 +17,7 @@ public class NationInfo
     /// </summary>
     public string PrimaryName => Names[0];
 
-    internal NationInfo(IEnumerable<string> names)
+    internal Nation(IEnumerable<string> names)
     {
         if (!names.Any())
             throw new ArgumentException(

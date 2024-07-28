@@ -1,4 +1,4 @@
-﻿namespace DiploPad.Map;
+﻿namespace DiploPad.Geography;
 
 /// <summary>
 /// An error occured while building the map.
@@ -13,7 +13,7 @@ public class MapBuilderException : Exception
     /// <summary>
     /// The specified coast does not exist on the destination territory.
     /// </summary>
-    public (TerritoryInfo territory, string destinationCoast)? BadCoast { get; init; }
+    public (Territory territory, string destinationCoast)? BadCoast { get; init; }
 
     public MapBuilderException() { }
 

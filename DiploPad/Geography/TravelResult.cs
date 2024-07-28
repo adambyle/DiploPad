@@ -1,4 +1,4 @@
-﻿namespace DiploPad.Map;
+﻿namespace DiploPad.Geography;
 
 /// <summary>
 /// Travel information from one territory to another.

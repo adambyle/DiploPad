@@ -1,4 +1,4 @@
-﻿namespace DiploPad.Map;
+﻿namespace DiploPad.Geography;
 
 /// <summary>
 /// A list of connections included a territory with wrong terrain type.
@@ -8,7 +8,7 @@ public class TerrainMismatchException : Exception
     /// <summary>
     /// The territory in the connections list that caused the problem.
     /// </summary>
-    public required TerritoryInfo BadTerritory { get; init;  }
+    public required Territory BadTerritory { get; init;  }
 
     public TerrainMismatchException() { }
 

@@ -1,12 +1,12 @@
-﻿namespace DiploPad.Map;
+﻿namespace DiploPad.Geography;
 
 /// <summary>
 /// ParseTerritory info for a supply center.
 /// </summary>
-public class SupplyCenterInfo : TerritoryInfo
+public class SupplyCenter : Territory
 {
     public override bool IsSupplyCenter => true;
 
-    internal SupplyCenterInfo(string name, IEnumerable<string> abbreviations)
+    internal SupplyCenter(string name, IEnumerable<string> abbreviations)
         : base(name, abbreviations) { }
 }

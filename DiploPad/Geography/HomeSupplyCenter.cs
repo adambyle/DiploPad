@@ -1,9 +1,9 @@
-﻿namespace DiploPad.Map;
+﻿namespace DiploPad.Geography;
 
 /// <summary>
 /// ParseTerritory info for a home supply center.
 /// </summary>
-public class HomeSupplyCenterInfo : TerritoryInfo
+public class HomeSupplyCenter : SupplyCenter
 {
     /// <summary>
     /// The nation this home supply center belongs to at the start of the game.
@@ -11,7 +11,7 @@ public class HomeSupplyCenterInfo : TerritoryInfo
     /// This value does not change throughout the game; it controls who is
     /// allowed to build on this supply center.
     /// </summary>
-    public NationInfo HomeNation { get; }
+    public Nation HomeNation { get; }
 
     /// <summary>
     /// The type of unit the nation has in this territory at the
@@ -27,10 +27,10 @@ public class HomeSupplyCenterInfo : TerritoryInfo
     /// </summary>
     public string? StartUnitCoast { get; }
 
-    internal HomeSupplyCenterInfo(
+    internal HomeSupplyCenter(
         string name,
         IEnumerable<string> abbreviations,
-        NationInfo homeNation,
+        Nation homeNation,
         UnitKind startUnitKind,
         string? startUnitCoast = null) : base(name, abbreviations)
     {

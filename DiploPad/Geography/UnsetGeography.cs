@@ -1,4 +1,4 @@
-﻿namespace DiploPad.Map;
+﻿namespace DiploPad.Geography;
 
 internal class UnsetGeography : IGeography
 {
@@ -8,7 +8,7 @@ internal class UnsetGeography : IGeography
     public Terrain Terrain => throw Error;
 
     public TravelResult CanTravelTo(
-        TerritoryInfo destination,
+        Territory destination,
         UnitKind unitKind,
         string? startCoast = null,
         string? destinationCoast = null) =>

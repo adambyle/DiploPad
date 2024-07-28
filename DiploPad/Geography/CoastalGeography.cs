@@ -1,10 +1,10 @@
-﻿namespace DiploPad.Map;
+﻿namespace DiploPad.Geography;
 
 using CoastalConnection = (
         string startCoast,
-        TerritoryInfo destination,
+        Territory destination,
         string destinationCoast);
-using SeaConnection = (string startCoast, TerritoryInfo destination);
+using SeaConnection = (string startCoast, Territory destination);
 
 /// <summary>
 /// Geographical information about a coastal territory.
@@ -24,7 +24,7 @@ public class CoastalGeography : IGeography
     /// 
     /// Armies can travel along land connections.
     /// </summary>
-    public IReadOnlyList<TerritoryInfo> LandConnections { get; }
+    public IReadOnlyList<Territory> LandConnections { get; }
 
     /// <summary>
     /// A list of adjacent land territories along a coast.
@@ -44,7 +44,7 @@ public class CoastalGeography : IGeography
 
     internal CoastalGeography(
         IEnumerable<string> coasts,
-        IEnumerable<TerritoryInfo> landConnections,
+        IEnumerable<Territory> landConnections,
         IEnumerable<CoastalConnection> coastalConnections,
         IEnumerable<SeaConnection> seaConnections)
     {
@@ -91,7 +91,7 @@ public class CoastalGeography : IGeography
     }
 
     public TravelResult CanTravelTo(
-        TerritoryInfo destination,
+        Territory destination,
         UnitKind unitKind,
         string? startCoast = null,
         string? destinationCoast = null)
@@ -144,7 +144,7 @@ public class CoastalGeography : IGeography
         }
         else
         {
-            // A destination coast was specified, so search for an exact match.
+            // A destination coast was specified, so search for an exact exactMatch.
             bool matchExists =
                 possibleCoastalConnections
                 .Any(connection => connection.destinationCoast == destinationCoast);
@@ -154,7 +154,7 @@ public class CoastalGeography : IGeography
 
     public void VerifyConnections()
     {
-        TerritoryInfo? invalidLandConnection =
+        Territory? invalidLandConnection =
             LandConnections
             .FirstOrDefault(connection =>
                 connection.Geography is not InlandGeography or CoastalGeography);
@@ -165,7 +165,7 @@ public class CoastalGeography : IGeography
                 BadTerritory = invalidLandConnection,
             };
 
-        TerritoryInfo? invalidCoastalConnection =
+        Territory? invalidCoastalConnection =
             CoastalConnections
             .Select(connection => connection.destination)
             .FirstOrDefault(destination =>
@@ -177,7 +177,7 @@ public class CoastalGeography : IGeography
                 BadTerritory = invalidCoastalConnection,
             };
 
-        TerritoryInfo? invalidSeaConnection =
+        Territory? invalidSeaConnection =
             SeaConnections
             .Select(connection => connection.destination)
             .FirstOrDefault(destination =>
@@ -189,4 +189,38 @@ public class CoastalGeography : IGeography
                 BadTerritory = invalidSeaConnection,
             };
     }
+
+    /// <summary>
+    /// Attempt to parse a coast name.
+    /// </summary>
+    /// <param name="coastName">The string to parse from.</param>
+    /// <returns>The full name of the coast, or null if none was found.</returns>
+    public string? ParseCoast(string coastName)
+    {
+        string? exactMatch = ParseCoastExact(coastName);
+        if (exactMatch is not null)
+            return exactMatch;
+
+        // Sometimes the user will add "C" for coast at the end, as in EC for East Coast.
+        // Try to remove "C" or "Coast" before trying again.
+        string trimmedCoastName;
+        bool endsWithCoast = coastName.EndsWith("coast", StringComparison.CurrentCultureIgnoreCase);
+        if (endsWithCoast)
+        {
+            trimmedCoastName = coastName[..^5].Trim();
+            return ParseCoastExact(trimmedCoastName);
+        }
+        bool endsWithC = coastName.EndsWith("c", StringComparison.CurrentCultureIgnoreCase);
+        if (endsWithC)
+        {
+            trimmedCoastName = coastName[..^1].Trim();
+            return ParseCoastExact(trimmedCoastName);
+        }
+
+        return null;
+    }
+
+    private string? ParseCoastExact(string coastName) =>
+        Coasts.FirstOrDefault(
+            coast => coast.StartsWith(coastName, StringComparison.CurrentCultureIgnoreCase));
 }

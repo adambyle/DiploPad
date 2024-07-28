@@ -1,4 +1,4 @@
-﻿namespace DiploPad.Map;
+﻿namespace DiploPad.Geography;
 
 /// <summary>
 /// Superficial information about a territory and its relationship
@@ -6,7 +6,7 @@
 /// 
 /// This class never includes any game instance data.
 /// </summary>
-public class TerritoryInfo
+public class Territory
 {
     /// <summary>
     /// The name of the territory, with proper capitalization,
@@ -36,7 +36,7 @@ public class TerritoryInfo
     /// </summary>
     public virtual bool IsSupplyCenter => false;
 
-    internal TerritoryInfo(string name, IEnumerable<string> abbreviations)
+    internal Territory(string name, IEnumerable<string> abbreviations)
     {
         if (!abbreviations.Any())
             throw new ArgumentException(

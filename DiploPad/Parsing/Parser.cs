@@ -1,4 +1,4 @@
-﻿using DiploPad.Map;
+﻿using DiploPad.Geography;
 
 namespace DiploPad.Parsing;
 
@@ -13,11 +13,11 @@ public static class Parser
     /// <param name="input">The user input string.</param>
     /// <param name="sources">The territories to check against.</param>
     /// <returns>The result of the parse.</returns>
-    public static ParseResult<TerritoryInfo> ParseTerritory(
+    public static ParseResult<Territory> ParseTerritory(
         string input,
-        IEnumerable<TerritoryInfo> sources)
+        IEnumerable<Territory> sources)
     {
-        bool TerritoryMatches(TerritoryInfo source)
+        bool TerritoryMatches(Territory source)
         {
             if (source.Name.StartsWith(input, StringComparison.CurrentCultureIgnoreCase))
                 return true;
@@ -30,16 +30,16 @@ public static class Parser
             return anyAbbreviationMatches;
         }
 
-        TerritoryInfo? primaryAbbreviationMatch = sources.FirstOrDefault(source =>
+        Territory? primaryAbbreviationMatch = sources.FirstOrDefault(source =>
             source
             .PrimaryAbbreviation
             .Equals(input, StringComparison.CurrentCultureIgnoreCase));
 
         if (primaryAbbreviationMatch is not null)
-            return new ParseResult<TerritoryInfo>([primaryAbbreviationMatch]);
+            return new ParseResult<Territory>([primaryAbbreviationMatch]);
 
         var matches = sources.Where(TerritoryMatches);
-        return new ParseResult<TerritoryInfo>(matches);
+        return new ParseResult<Territory>(matches);
     }
     /// <summary>
     /// Parse a nation from user input;
@@ -47,11 +47,11 @@ public static class Parser
     /// <param name="input">The user input string.</param>
     /// <param name="sources">The nations to check against.</param>
     /// <returns>The result of the parse.</returns>
-    public static ParseResult<NationInfo> ParseNation(
+    public static ParseResult<Nation> ParseNation(
         string input,
-        IEnumerable<NationInfo> sources)
+        IEnumerable<Nation> sources)
     {
-        bool NationMatches(NationInfo source)
+        bool NationMatches(Nation source)
         {
             bool anyNameMatches =
                 source
@@ -61,6 +61,6 @@ public static class Parser
         }
 
         var matches = sources.Where(NationMatches);
-        return new ParseResult<NationInfo>(matches);
+        return new ParseResult<Nation>(matches);
     }
 }

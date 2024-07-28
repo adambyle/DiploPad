@@ -1,6 +1,6 @@
-﻿namespace DiploPad.Map;
+﻿namespace DiploPad.Geography;
 
-using LandConnection = (TerritoryInfo destination, string destinationCoast);
+using LandConnection = (Territory destination, string destinationCoast);
 
 /// <summary>
 /// Geographical information about a sea territory.
@@ -10,7 +10,7 @@ public class SeaGeography : IGeography
     /// <summary>
     /// A list of adjacent sea territories.
     /// </summary>
-    public IReadOnlyList<TerritoryInfo> SeaConnections { get; }
+    public IReadOnlyList<Territory> SeaConnections { get; }
 
     /// <summary>
     /// A list of adjacent land territories in the form of territory-coast pairs.
@@ -21,7 +21,7 @@ public class SeaGeography : IGeography
 
     internal SeaGeography(
         IEnumerable<LandConnection> landConnections,
-        IEnumerable<TerritoryInfo> seaConnections)
+        IEnumerable<Territory> seaConnections)
     {
         LandConnections =
             landConnections
@@ -34,7 +34,7 @@ public class SeaGeography : IGeography
     }
 
     public TravelResult CanTravelTo(
-        TerritoryInfo destination,
+        Territory destination,
         UnitKind unitKind,
         string? startCoast = null,
         string? destinationCoast = null)
@@ -77,7 +77,7 @@ public class SeaGeography : IGeography
 
     public void VerifyConnections()
     {
-        TerritoryInfo? invalidLandConnection =
+        Territory? invalidLandConnection =
             LandConnections
             .Select(connection => connection.destination)
             .FirstOrDefault(destination =>
@@ -89,7 +89,7 @@ public class SeaGeography : IGeography
                 BadTerritory = invalidLandConnection,
             };
 
-        TerritoryInfo? invalidSeaConnection =
+        Territory? invalidSeaConnection =
             SeaConnections
             .FirstOrDefault(connection =>
                 connection.Geography is not SeaGeography);
