@@ -8,7 +8,10 @@ namespace DiploPad.Orders;
 /// </summary>
 public class RetreatContext
 {
-    public static RetreatContext NoRetreats =>
+    /// <summary>
+    /// A retreat context where no retreats are needed.
+    /// </summary>
+    public static RetreatContext NoRetreatsContext =>
         new(standoffs: [], invasions: [], dislodgedUnits: []);
 
     /// <summary>
@@ -34,6 +37,9 @@ public class RetreatContext
     /// </summary>
     public IReadOnlyList<Unit> DislodgedUnits;
 
+    /// <summary>
+    /// Whether there are any units that need retreat orders from players.
+    /// </summary>
     public bool AttentionNeeded => DislodgedUnits.Count > 0;
 
     internal RetreatContext(

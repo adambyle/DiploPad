@@ -6,7 +6,7 @@
 public enum Phase
 {
     /// <summary>
-    /// The _year's first round of regular orders.
+    /// The year's first round of regular orders.
     /// </summary>
     SpringOrders,
 
@@ -16,7 +16,7 @@ public enum Phase
     SpringRetreats,
 
     /// <summary>
-    /// The _year's second round of regular orders.
+    /// The year's second round of regular orders.
     /// </summary>
     FallOrders,
 
@@ -26,7 +26,7 @@ public enum Phase
     FallRetreats,
 
     /// <summary>
-    /// Builds at the end of the _year (also known as winter).
+    /// Builds at the end of the year (also known as winter).
     /// </summary>
     WinterBuilds,
 }

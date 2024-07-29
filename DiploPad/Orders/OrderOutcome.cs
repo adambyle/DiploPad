@@ -1,26 +1,32 @@
-﻿using DiploPad.Games;
+﻿namespace DiploPad.Orders;
 
-namespace DiploPad.Orders;
-
+/// <summary>
+/// The outcome of an order on the turn.
+/// </summary>
 public class OrderOutcome
 {
-    internal OrderTransform Transform { get; }
-
+    /// <summary>
+    /// The order that this is the outcome of.
+    /// </summary>
     public IOrder Order { get; }
 
+    /// <summary>
+    /// The success status of the order.
+    /// </summary>
     public OrderOutcomeStatus Status { get; }
-}
 
-public enum OrderOutcomeStatus
-{
-    Illegal,
-    Failed,
-    Succeeded,
-}
+    /// <summary>
+    /// The action to apply to the 
+    /// </summary>
+    internal OrderTransform Transform { get; }
 
-internal delegate void OrderTransform(GameState gameState);
-
-internal static class OrderTransformTemplates
-{
-    public static OrderTransform NoOp => (_) => { };
+    internal OrderOutcome(
+        IOrder order,
+        OrderOutcomeStatus status,
+        OrderTransform transform)
+    {
+        Order = order;
+        Status = status;
+        Transform = transform;
+    }
 }
