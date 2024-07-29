@@ -100,4 +100,6 @@ public class SeaGeography : IGeography
                 BadTerritory = invalidSeaConnection,
             };
     }
+
+    public string? ParseCoast(string coastName) => null;
 }

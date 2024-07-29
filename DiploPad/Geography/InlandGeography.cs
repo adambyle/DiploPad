@@ -41,4 +41,6 @@ public class InlandGeography : IGeography
                 BadTerritory = invalidLandConnection,
             };
     }
+
+    public string? ParseCoast(string coastName) => null;
 }

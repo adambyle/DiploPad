@@ -190,11 +190,6 @@ public class CoastalGeography : IGeography
             };
     }
 
-    /// <summary>
-    /// Attempt to parse a coast name.
-    /// </summary>
-    /// <param name="coastName">The string to parse from.</param>
-    /// <returns>The full name of the coast, or null if none was found.</returns>
     public string? ParseCoast(string coastName)
     {
         string? exactMatch = ParseCoastExact(coastName);

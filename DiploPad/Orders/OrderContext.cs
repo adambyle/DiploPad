@@ -30,11 +30,11 @@ public class OrderContext
     public OrderContext(GameState gameState, IEnumerable<IOrder> orders)
     {
         GameState = gameState;
-        Orders = orders.ToArray();
+        Orders = orders.Distinct().ToArray();
 
         OrderOutcome OrderToOutcome(IOrder order)
         {
-            var otherOrders = Orders.Where(otherOrder => otherOrder != order);
+            var otherOrders = Orders.Where(otherOrder => !otherOrder.Equals(order));
             return order.GetOutcome(GameState, otherOrders);
         }
 
@@ -49,7 +49,11 @@ public class OrderContext
     /// <returns>A new order context with its own outcomes.</returns>
     public OrderContext WithOrders(IEnumerable<IOrder> newOrders, IEnumerable<IOrder> removeOrders)
     {
-        throw new NotImplementedException();
+        var orders =
+            Orders
+            .Concat(newOrders)
+            .Except(removeOrders);
+        return new OrderContext(GameState, orders);
     }
 
     /// <summary>

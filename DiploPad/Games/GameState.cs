@@ -288,5 +288,18 @@ public class GameState
     // NOTICE: These methods only to be called from OrderOutcome.Transform.
     // OurderOutcome.Transform, in turn, is only to be called from the constructor.
 
+    public void ForceClearTerritory(Territory territory) =>
+        _units.RemoveAll(unit => unit.Territory == territory);
+
+    public void ForceAddUnit(Unit unit)
+    {
+        if (!Map.Territories.Contains(unit.Territory))
+            return;
+
+        ForceClearTerritory(unit.Territory);
+
+        _units.Add(unit);
+    }
+
     #endregion
 }

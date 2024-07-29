@@ -34,4 +34,11 @@ public interface IGeography
     /// Verify whether the connections are to valid territory terrains.
     /// </summary>
     void VerifyConnections();
+
+    /// <summary>
+    /// Attempt to parse a coast name.
+    /// </summary>
+    /// <param name="coastName">The string to parse from.</param>
+    /// <returns>The full name of the coast, or null if none was found.</returns>
+    string? ParseCoast(string coastName);
 }
