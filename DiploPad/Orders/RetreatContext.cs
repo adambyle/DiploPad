@@ -1,6 +1,7 @@
-﻿using DiploPad.Geography;
+﻿using DiploPad.Games;
+using DiploPad.Geography;
 
-namespace DiploPad.Games;
+namespace DiploPad.Orders;
 
 /// <summary>
 /// Information needed for retreats.
@@ -32,6 +33,8 @@ public class RetreatContext
     /// They are not said to occupy the territories specified here.
     /// </summary>
     public IReadOnlyList<Unit> DislodgedUnits;
+
+    public bool AttentionNeeded => DislodgedUnits.Count > 0;
 
     internal RetreatContext(
         IEnumerable<Territory> standoffs,
