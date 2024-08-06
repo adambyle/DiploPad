@@ -15,4 +15,6 @@ internal class UnsetGeography : IGeography
             throw Error;
 
     public void VerifyConnections() => throw Error;
+
+    public string? ParseCoast(string coastName) => throw Error;
 }

@@ -1,4 +1,5 @@
 ﻿using DiploPad.Geography;
+using DiploPad.Orders.Outcomes;
 
 namespace DiploPad.Orders;
 
@@ -22,12 +23,4 @@ public interface IUnitOrder : IOrder
     /// The territory occupied by the unit being ordered.
     /// </summary>
     Territory SourceTerritory { get; }
-
-    /// <summary>
-    /// Whether this order shares a source unit with another order.
-    /// </summary>
-    /// <param name="other">The other unit order to check.</param>
-    /// <returns></returns>
-    sealed bool HasSameOrderedUnit(IUnitOrder other) =>
-        OrderingNation == other.OrderingNation && SourceTerritory == other.SourceTerritory;
 }

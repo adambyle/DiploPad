@@ -47,4 +47,6 @@ public class Territory
         Abbreviations = abbreviations.Distinct().ToArray();
         Geography = new UnsetGeography();
     }
+
+    public override string ToString() => Name;
 }

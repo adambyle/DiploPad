@@ -1,4 +1,4 @@
-﻿namespace DiploPad.Orders;
+﻿namespace DiploPad.Orders.Outcomes;
 
 /// <summary>
 /// The success status of the order.

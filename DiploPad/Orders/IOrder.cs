@@ -1,4 +1,5 @@
 ﻿using DiploPad.Games;
+using DiploPad.Orders.Outcomes;
 
 namespace DiploPad.Orders;
 
@@ -7,6 +8,11 @@ namespace DiploPad.Orders;
 /// </summary>
 public interface IOrder : IEquatable<IOrder>
 {
+    /// <summary>
+    /// Get a string representation of the order.
+    /// </summary>
+    string ToString();
+
     /// <summary>
     /// Get the outcome of this order in the context of the game
     /// and other orders.

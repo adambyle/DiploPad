@@ -1,4 +1,4 @@
-﻿namespace DiploPad.Orders;
+﻿namespace DiploPad.Orders.Outcomes;
 
 internal static class OrderTransformTemplates
 {

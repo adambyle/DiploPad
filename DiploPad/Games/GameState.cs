@@ -9,8 +9,8 @@ namespace DiploPad.Games;
 /// </summary>
 public class GameState
 {
-    private List<Unit> _units;
-    private List<GameSupplyCenter> _supplyCenters;
+    private readonly List<Unit> _units;
+    private readonly List<GameSupplyCenter> _supplyCenters;
 
     /// <summary>
     /// The map of the game board.
@@ -30,12 +30,12 @@ public class GameState
     /// <summary>
     /// The units on the board.
     /// </summary>
-    public IReadOnlyList<Unit> Units { get; }
+    public IReadOnlyList<Unit> Units => _units;
 
     /// <summary>
     /// The supply centers and ownership information.
     /// </summary>
-    public IReadOnlyList<GameSupplyCenter> SupplyCenters { get; }
+    public IReadOnlyList<GameSupplyCenter> SupplyCenters => _supplyCenters;
 
     /// <summary>
     /// Information about retreats that need resolving.
@@ -53,8 +53,8 @@ public class GameState
         Map = map;
         Year = year;
         Phase = phase;
-        Units = units.ToArray();
-        SupplyCenters = supplyCenters.ToArray();
+        _units = units.ToList();
+        _supplyCenters = supplyCenters.ToList();
         RetreatContext = retreatContext;
     }
 
@@ -63,8 +63,8 @@ public class GameState
         Map = other.Map;
         Year = other.Year;
         Phase = other.Phase;
-        Units = [.. other.Units];
-        SupplyCenters = [.. other.SupplyCenters];
+        _units = [.. other.Units];
+        _supplyCenters = [.. other.SupplyCenters];
         RetreatContext = other.RetreatContext;
     }
 

@@ -1,4 +1,5 @@
 ﻿using DiploPad.Games;
+using DiploPad.Orders.Outcomes;
 
 namespace DiploPad.Orders;
 

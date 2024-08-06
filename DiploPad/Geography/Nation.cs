@@ -26,4 +26,6 @@ public class Nation
 
         Names = names.Distinct().ToArray();
     }
+
+    public override string ToString() => PrimaryName;
 }
