@@ -19,5 +19,5 @@ public interface IOrder : IEquatable<IOrder>
     /// </summary>
     /// <param name="gameState">The game to apply the order to.</param>
     /// <param name="otherOrders">The other orders that may affect this one.</param>
-    OrderOutcome GetOutcome(GameState gameState, IEnumerable<IOrder> otherOrders);
+    OrderOutcome GetOutcome(GameState gameState, OrderContext context);
 }

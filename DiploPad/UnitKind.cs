@@ -15,3 +15,19 @@ public enum UnitKind
     /// </summary>
     Fleet,
 }
+
+/// <summary>
+/// Extension methods for the <see cref="UnitKind"/> type.
+/// </summary>
+public static class UnitKindExtensions
+{
+    /// <summary>
+    /// Get the unit kind's abbreviation letter.
+    /// </summary>
+    public static string Abbreviation(this UnitKind unitKind) => unitKind switch
+    {
+        UnitKind.Army => "A",
+        UnitKind.Fleet => "F",
+        _ => throw new ArgumentException("Invalid unit kind.", nameof(unitKind)),
+    };
+}

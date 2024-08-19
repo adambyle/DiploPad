@@ -99,6 +99,8 @@ public class Unit
             UnitKind.Fleet,
             nation);
     }
+
+    public override string ToString() => $"{UnitKind.Abbreviation()} {Territory}";
 }
 
 /// <summary>

@@ -1,5 +1,6 @@
 ﻿namespace DiploPad.Geography;
 
+using DiploPad;
 using CoastalConnection = (
         string startCoast,
         Territory destination,

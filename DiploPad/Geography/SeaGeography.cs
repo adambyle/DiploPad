@@ -1,5 +1,6 @@
 ﻿namespace DiploPad.Geography;
 
+using DiploPad;
 using LandConnection = (Territory destination, string destinationCoast);
 
 /// <summary>
